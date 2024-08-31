@@ -16,10 +16,16 @@ return new class extends Migration
         Schema::create('api_resources_request', function (Blueprint $table) {
             $table->id();
             $table->string('method');
-            $table->string('status_code');
-            $table->string('response_json');
-            $table->string('request_details');
-            $table->string('sender_ip_address');
+            $table->string('controller_action');
+            $table->string('middleware');
+            $table->string('path');
+            $table->string('status');
+            $table->string('duration');
+            $table->string('ip_address');
+            $table->text('request_headers');
+            $table->text('response_headers');
+            $table->text('response_json');
+            $table->string('memory_usage');
             $table->timestamps();
         });
     }
