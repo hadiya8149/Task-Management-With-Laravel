@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
-            $table->string('description');
-            $table->string('status');
-            $table->string('tag');
-            $table->string('documents');
-            $table->date('deadline');
+            $table->text('description');
+            $table->string('status')->nullable();
+            $table->string('tag')->nullable();
+            $table->string('documents')->nullable();
+            $table->date('deadline')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
