@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Requests;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ForgotPasswordController;
+
+use Illuminate\Support\Facades\Password;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +25,36 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-
 Route::controller(UserController::class)->group(function(){
     Route::post('signup', 'store')->name('signup');
+    Route::post('login', 'login')->name('login');
 });
+Route::middleware(['auth'=>'api'])->group(function(){
+    Route::post('/forgot_password', [UserController::class, 'forgotPassword']);
+});
+Route::post('/reset-password', function (Request $request) {
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
+ 
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->forceFill([
+                'password' => Hash::make($password)
+            ])->setRememberToken(Str::random(60));
+ 
+            $user->save();
+ 
+            event(new PasswordReset($user));
+        }
+    );
+ 
+    return $status === Password::PASSWORD_RESET
+                ? redirect()->route('login')->with('status', __($status))
+                : back()->withErrors(['email' => [__($status)]]);
+})->middleware('guest')->name('password.update');
+
+Route::post('/reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->middleware('guest')->name('password.update');
