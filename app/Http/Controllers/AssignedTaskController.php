@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AssignedTask;
+use App\Models\Task;
+
 use App\Http\Requests\AssignTaskRequest;
+
 class AssignedTaskController extends Controller
+
 {
     public function index()
     {
@@ -55,7 +59,7 @@ class AssignedTaskController extends Controller
     public function showAssignedTaskByUser(Request $request)
     {
         $user_id = $request->user_id;
-        $tasks = AssignedTask::with('tasks')->where('$user_id', $user_id);
+        $tasks = AssignedTask::find(5)->tasks->get();
         return response()->json([
             'data'=>$tasks
         ]);
