@@ -10,31 +10,26 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPasswordMail;
 
 use App\Models\User;
-
+use App\Http\Requests\ForgotPassword;
 class ForgotPasswordController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api',[ "except"=>['index', 'submitResetPasswordForm']]);
+        // $this->middleware('auth:api',[ "except"=>['index','submitForgotPasswordForm', 'submitResetPasswordForm']]);
     }
-    public function index()
-    {
-        Mail::to('testreceiver@gmail.com')->send(new ResetPasswordMail('hadiay'));
 
-    }
-    public function submitForgotPasswordForm() #for sending reset password link
+    public function submitForgotPasswordForm(ForgotPassword $request) #for sending reset password link
     {
         $validatedData = $request->validated();
         $email = $validatedData['email'];
+        // sends a pasword reset link to the provided email
         $status = Password::sendResetLink(
            ["email"=>$email]
         );
-        // get token from reset password link
-        Mail::send('mails.send-forgot-password-mail', ['token'=>''], function($message) use($request)
-        {
-            $message->to($email);
-            $message->subject('Reset Password');
-        });
+       
+        return $status === Password::RESET_LINK_SENT
+        ? back()->with(['status' => __($status)])
+        : back()->withErrors(['email' => __($status)]);
     }
     public function showResetPasswrodForm() #web function not needed
     {

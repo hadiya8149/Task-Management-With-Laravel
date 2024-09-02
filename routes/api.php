@@ -29,32 +29,37 @@ Route::controller(UserController::class)->group(function(){
     Route::post('signup', 'store')->name('signup');
     Route::post('login', 'login')->name('login');
 });
-Route::middleware(['auth'=>'api'])->group(function(){
-    Route::post('/forgot_password', [UserController::class, 'forgotPassword']);
-});
-Route::post('/reset-password', function (Request $request) {
-    $request->validate([
-        'token' => 'required',
-        'email' => 'required|email',
-        'password' => 'required|min:8|confirmed',
-    ]);
- 
-    $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function ($user, $password) {
-            $user->forceFill([
-                'password' => Hash::make($password)
-            ])->setRememberToken(Str::random(60));
- 
-            $user->save();
- 
-            event(new PasswordReset($user));
-        }
-    );
- 
-    return $status === Password::PASSWORD_RESET
-                ? redirect()->route('login')->with('status', __($status))
-                : back()->withErrors(['email' => [__($status)]]);
-})->middleware('guest')->name('password.update');
+// Route::middleware(['auth'=>'api'])->group(function(){
+// });
 
-Route::post('/reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->middleware('guest')->name('password.update');
+Route::middleware('guest')->group(function()
+{
+    Route::post('/forgot_password', [ForgotPasswordController::class, 'submitForgotPasswordForm']);
+    Route::post('/reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('password.update');
+
+});
+// Route::post('/reset-password', function (Request $request) {
+//     $request->validate([
+//         'token' => 'required',
+//         'email' => 'required|email',
+//         'password' => 'required|min:8|confirmed',
+//     ]);
+ 
+//     $status = Password::reset(
+//         $request->only('email', 'password', 'password_confirmation', 'token'),
+//         function ($user, $password) {
+//             $user->forceFill([
+//                 'password' => Hash::make($password)
+//             ])->setRememberToken(Str::random(60));
+ 
+//             $user->save();
+ 
+//             event(new PasswordReset($user));
+//         }
+//     );
+ 
+//     return $status === Password::PASSWORD_RESET
+//                 ? redirect()->route('login')->with('status', __($status))
+//                 : back()->withErrors(['email' => [__($status)]]);
+// })->middleware('guest')->name('password.update');
+
