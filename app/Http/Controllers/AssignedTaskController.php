@@ -28,5 +28,28 @@ class AssignedTaskController extends Controller
             'message'=>'Task assigned successfully'
         ]);
     }
-    
+    public function editAssignedTask(AssignTaskRequest $request)
+    {
+        $validatedData = $request->validated();
+        $taskId = $validatedData['task_id'];
+        $userId = $validatedData['user_id'];
+        $assignedTask = AssignedTask::where('task_id',$taskId)->firstOrFail();
+        $assignedTask->user_id = $userId;
+        $assignedTask->save();
+        return response()->json([
+            'message'=>'Assignee updated successfully'
+        ]);
+    }
+    public function deleteAssignedTask(AssignTaskRequest $request)
+    {
+        $validatedData = $request->validated();
+        $taskId = $validatedData['task_id'];
+        $userId = $validatedData['user_id'];
+
+        $assignedTask = AssignedTask::where('task_id', $taskId)->where('user_id', $userId);
+        $assignedTask->delete();
+        return response()->json([
+            'message'=>'assignee removed successfully'
+        ]);
+    }
 }

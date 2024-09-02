@@ -33,7 +33,6 @@ Route::controller(UserController::class)->group(function(){
 
 
 Route::middleware(['jwt.verify'])->group(function(){
-    
     Route::get('/tasks', [TaskController::class, 'index']);
     Route::get('/task', [TaskController::class, 'showTaskById']);
     Route::post('/create-task', [TaskController::class, 'createTask']);
@@ -51,5 +50,10 @@ Route::middleware('guest')->group(function()
 
 });
 
+Route::middleware(['jwt.verify'])->group(function(){
+    Route::post('/assign-task', [AssignedTaskController::class, 'assignTask']);
+    Route::get('/all-assigned-tasks', [AssignedTaskController::class, 'index']);
+    Route::post('/edit-assigned-task', [AssignedTaskController::class, 'editAssignedTask']);
+    Route::delete('/delete-assigned-task', [AssignedTaskController::class, 'deleteAssignedTask']);
 
-Route::post('/assign-task', [AssignedTaskController::class, 'assignTask']);
+});
