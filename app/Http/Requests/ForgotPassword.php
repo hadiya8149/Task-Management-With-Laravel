@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
 class ForgotPassword extends FormRequest
 {
     /**
@@ -26,5 +29,20 @@ class ForgotPassword extends FormRequest
         return [
             'email'=>'required|email'
         ];
+    }
+    public function messages()
+    {
+        return [
+            'email.required'=>'Email is required.',
+            'email.email'=>'Invalid email format'
+        ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $this->validator->errors();
+        $response =  response()->json([
+            'validation errors'=>$errors,
+        ]);
+        throw new HttpResponseException($response);
     }
 }
