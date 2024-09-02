@@ -1,9 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
-use Response;
-use Throwable;
-use Tymon\JWTAuth\Exceptions\JWTException;
+
 use Closure;
 use JWTAuth;
 use Exception;
@@ -23,7 +21,21 @@ class JwtMiddleware extends BaseMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        try{
+            $user = JWTAuth::parseToken()->authenticate();
+
+        }
+        catch (TokenInvalidException)
+        {
+            return response('Token in invalid', 401);
+        }
+        catch(TokenExpiredException)
+        {
+            return response('Token is expired', 401);
+        }
+        catch(\Exception $e){
+            return response('Authorization token not found', 401);
+        }
         return $next($request);
     }
 }
