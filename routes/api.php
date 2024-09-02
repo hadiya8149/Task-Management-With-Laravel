@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\AssignedTaskController;
 use Illuminate\Support\Facades\Password;
 
 
@@ -49,3 +50,6 @@ Route::middleware('guest')->group(function()
     Route::post('/reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('password.update');
 
 });
+
+
+Route::post('/assign-task', [AssignedTaskController::class, 'assignTask']);
