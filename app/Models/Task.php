@@ -13,4 +13,9 @@ class Task extends Model
     protected $fillable = ['title', 'description', 'status', 'tag', 'documents', 'deadline'];
     protected $table = 'tasks';
     // public $timestamps=false;\
+    public function assignedtasks()
+    {
+        return $this->hasMany(AssignedTask::class);
+
+    }
 }

@@ -52,4 +52,12 @@ class AssignedTaskController extends Controller
             'message'=>'assignee removed successfully'
         ]);
     }
+    public function showAssignedTaskByUser(Request $request)
+    {
+        $user_id = $request->user_id;
+        $tasks = AssignedTask::with('tasks')->where('$user_id', $user_id);
+        return response()->json([
+            'data'=>$tasks
+        ]);
+    }
 }

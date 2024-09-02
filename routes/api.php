@@ -55,5 +55,5 @@ Route::middleware(['jwt.verify'])->group(function(){
     Route::get('/all-assigned-tasks', [AssignedTaskController::class, 'index']);
     Route::post('/edit-assigned-task', [AssignedTaskController::class, 'editAssignedTask']);
     Route::delete('/delete-assigned-task', [AssignedTaskController::class, 'deleteAssignedTask']);
-
+    Route::get('/get-all-task-assigned-to-user', [AssignedTaskController::class, 'showAssignedTaskByUser']);
 });
