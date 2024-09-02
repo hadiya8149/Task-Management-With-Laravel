@@ -11,16 +11,23 @@ class LogRequestDetails
 {
     /**
      * Handle an incoming request.
-     *
+     *a
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
     {
+
+     
+        return $next($request);
+    }
+    public function terminate(Request $request, Response $response): void
+    {
+        // store sql log errors in logs database table
+        
         $startTime = microtime(true);
 
-        $response = $next($request);
         $duration = microtime(true)-$startTime;
 
         $status = $response->status();
@@ -42,7 +49,6 @@ class LogRequestDetails
             'response_headers'=>json_encode($response->headers->all()),
             'response_json'=>$responseJson,
             'memory_usage'=>$memoryUsage
-        ]);
-        return $response;
+        ]);   
     }
 }

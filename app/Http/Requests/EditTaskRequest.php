@@ -3,11 +3,11 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\RequireTaskId;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\Rule;
-use App\Models\Task;
-class StoreTaskRequest extends FormRequest
+
+class EditTaskRequest extends RequireTaskId
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,32 +18,31 @@ class StoreTaskRequest extends FormRequest
     {
         return true;
     }
-    // make a custom validation rule for this #TODO
-    // protected $allowedStatuses = ['TODO', 'IN PROGRESS', 'DONE'];
-
 
     /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, mixed>
      */
-
-     // implement rule for duplicate entry key
     public function rules()
     {
-
+        # if the values are not changed then the default values must be used 
         return [
-            'title'=>'required|string|max:255|unique:tasks,title',
-            'description'=>'required|min:3',
-            'status'=>'nullable|string|max:50|',
-            'tag'=>'nullable|max:255',
-            'documents'=>'nullable|string',
-            'deadline'=>'nullable|date|after_or_equal:today'
+            'id'=>'required|integer|exists:tasks',
+            'title'=>'required|string|max:255',
+            'description'=>'required|max:1000',
+            'status'=>'required|string|max:50',
+            'tag'=>'required|string|max:100',
+            'documents'=>'required|string',
+            'deadline'=>'required|date|after_or_equal:today'
         ];
     }
     public function messages()
     {
         return [
+            'id.required'=>'Task Id not given',
+            'id.integer'=>'Id must be integer',
+            'id.exists'=>"Task not found",
             'title.required' => 'The title field is required.',
             'title.string' => 'The title must be a string.',
             'title.max' => 'The title may not be greater than 255 characters.',
@@ -60,10 +59,7 @@ class StoreTaskRequest extends FormRequest
         $errors = $this->validator->errors();
         $response =  response()->json([
             'validation errors'=>$errors,
-            'validator'=>$validator
         ]);
         throw new HttpResponseException($response);
     }
-
-    
 }

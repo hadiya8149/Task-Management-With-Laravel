@@ -58,15 +58,5 @@ class UserController extends Controller
             "access_token" => $token
         ]);
     }
-    public function forgotPassword(ForgotPassword $request)
-    {
-        $validatedData = $request->validated();
-        $email = $validatedData['email'];
-        $status = Password::sendResetLink(
-           ["email"=>$email]        );
-        Log::info(Password::RESET_LINK_SENT);
-        return $status === Password::RESET_LINK_SENT
-        ? back()->with(['status' => __($status)])
-        : back()->withErrors(['email' => __($status)]);
-    }
+
 }
