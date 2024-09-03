@@ -11,10 +11,16 @@ use App\Http\Requests\AssignTaskRequest;
 class AssignedTaskController extends Controller
 
 {
+    public function __construct()
+    {
+        $this->middleware('jwt.verify');
+
+        $this->middleware('role:manager')->except(['index']);
+    }
     public function index()
     {
         $allAssignedTasks = AssignedTask::all();
-        return resosne()->json([
+        return response()->json([
             'assigned tasks'=>$allAssignedTasks
         ]);
     }

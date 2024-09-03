@@ -15,10 +15,7 @@ use JWTAuth;
 use App\Models\User;
 class UserController extends Controller
 {
-    public function __constuct()
-    {
-        $this->middleware('auth:api', ['except'=>['login', 'store']]);
-    }
+
     public function store(SignupRequest $request)
     {
         $validated = $request->validated();
@@ -57,6 +54,17 @@ class UserController extends Controller
             "message" => "Logged in successfully",
             "access_token" => $token
         ]);
+    }
+    public function getPermissions(Request $request)
+    {
+        $userId = $request->user_id;
+        $user  = User::role('contributor')->get();
+        $permissionNames = $user->getAllPermissions();
+        return response()->json(
+            [
+                'data'=>$permissionNames
+            ]
+        );
     }
 
 }
