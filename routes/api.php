@@ -32,13 +32,17 @@ Route::controller(UserController::class)->group(function(){
 });
 
 
+
 Route::middleware(['jwt.verify'])->group(function(){
     Route::get('/tasks', [TaskController::class, 'index']);
     Route::get('/task', [TaskController::class, 'showTaskById']);
+
+    // only managers can create edit or delete task
     Route::post('/create-task', [TaskController::class, 'createTask']);
     Route::delete('/delete', [TaskController::class, 'delete']);
     Route::post('/edit-task', [TaskController::class, 'editTask']);
-    Route::post('/update-task', [TaskController::class, 'update']);
+    // a contributor can edit his assigned tasks
+    Route::post('/update-task', [TaskController::class, 'updateTask']);
 
 
 });
@@ -55,7 +59,7 @@ Route::get('/all-assigned-tasks', [AssignedTaskController::class, 'index']);
 
 
 // only managers can assign task ,update assignee, remove assignee and view all assigned task to user
-Route::group([middleware=>['jwt.verify', 'role:manager', 'api']] , function(){
+Route::middleware(['jwt.verify', 'role:manager,api'])->group(function(){
     Route::post('/assign-task', [AssignedTaskController::class, 'assignTask']);
     Route::post('/edit-assigned-task', [AssignedTaskController::class, 'editAssignedTask']);
     Route::delete('/delete-assigned-task', [AssignedTaskController::class, 'deleteAssignedTask']);

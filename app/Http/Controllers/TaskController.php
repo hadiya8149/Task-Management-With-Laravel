@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
 use App\Models\Task;
+use App\Models\User;
+use App\Models\AssignedTasks;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\RequireTaskId;
 use App\Http\Requests\EditTaskRequest;
@@ -12,6 +14,8 @@ class TaskController extends Controller
     public function __construct()
     {
         $this->middleware('jwt.verify');
+        $this->middleware(['role:manager,api'])->only(['createTask', 'editTask', 'delete']);
+        $this->middleware(['role:contributor,api'])->only(['updateTask']);
     }
     
     public function createTask(StoreTaskRequest $request)
@@ -73,4 +77,26 @@ class TaskController extends Controller
             ]
             );
     }
+
+    public function updateTask(EditTaskRequest $request)
+    {
+        $validatedData = $request->validated();
+        // check if the user is updating his assigned task
+        $taskId = $validatedData['id'];
+        $email = auth()->user()->email;
+        $userId = User::where('email', $email)->first()->id;
+
+        $task = Task::find($taskId)->assignedtasks->where('user_id',$userId);
+        if(!$task){
+            $task->title = $validatedData['title'];
+            $task->description = $validatedData['description'];
+            $task->status = $validatedData['status'];
+            $task->tag = $validatedData['tag'];
+            $task->deadline = $validatedData['deadline'];
+            $task->documents = $validatedData['documents'];
+            $task->save();
+        }
+        return response('Unathorized', 403);
+    }
+
 }

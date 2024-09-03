@@ -17,7 +17,7 @@ class Task extends Model
     // public $timestamps=false;\
     public function assignedtasks()
     {
-        return $this->hasMany(AssignedTasks::class, 'task_id', 'id');
+        return $this->hasMany(AssignedTask::class, 'task_id', 'id');
 
     }
 }
