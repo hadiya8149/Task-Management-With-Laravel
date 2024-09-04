@@ -27,14 +27,14 @@ class JwtMiddleware extends BaseMiddleware
         }
         catch (TokenInvalidException)
         {
-            return response('Token in invalid', 401);
+            return response()->json(["message"=>'Token in invalid'], 401);
         }
         catch(TokenExpiredException)
         {
-            return response('Token is expired', 401);
+            return response()->json(["message"=>'Token is expired'],401);
         }
         catch(\Exception $e){
-            return response('Authorization token not found', 401);
+            return response()->json(["message"=>'Authorization token not found'], 401);
         }
         return $next($request);
     }

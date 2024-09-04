@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\AssignedTask;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -56,5 +57,9 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+    public function assignedtasks()
+    {
+        return $this->hasMany(AssignedTask::class, 'user_id', 'id');
     }
 }

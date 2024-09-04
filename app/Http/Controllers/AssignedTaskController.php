@@ -34,6 +34,9 @@ class AssignedTaskController extends Controller
             'task_id'=>$taskId,
             'user_id'=>$userId
         ]);
+
+        $user = User::find($userId);
+        $user->givePermissionTo('update assigned task');
         return response()->json([
             'message'=>'Task assigned successfully'
         ]);

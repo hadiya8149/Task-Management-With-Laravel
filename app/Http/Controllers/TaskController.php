@@ -15,7 +15,8 @@ class TaskController extends Controller
     {
         $this->middleware('jwt.verify');
         $this->middleware(['role:manager,api'])->only(['createTask', 'editTask', 'delete']);
-        $this->middleware(['role:contributor,api'])->only(['updateTask']);
+        $this->middleware(['role:contributor,api', 'update_task.permission'])->only(['updateTask']);
+        // $this->middleware(['permission:update assigned task'])->only(['updateTask']);
     }
     
     public function createTask(StoreTaskRequest $request)
@@ -81,22 +82,23 @@ class TaskController extends Controller
     public function updateTask(EditTaskRequest $request)
     {
         $validatedData = $request->validated();
-        // check if the user is updating his assigned task
         $taskId = $validatedData['id'];
-        $email = auth()->user()->email;
-        $userId = User::where('email', $email)->first()->id;
 
-        $task = Task::find($taskId)->assignedtasks->where('user_id',$userId);
-        if(!$task){
+
+        if($taskId){
+            $task = Task::find($taskId);
             $task->title = $validatedData['title'];
             $task->description = $validatedData['description'];
             $task->status = $validatedData['status'];
             $task->tag = $validatedData['tag'];
             $task->deadline = $validatedData['deadline'];
             $task->documents = $validatedData['documents'];
-            $task->save();
+            // $task->save();
         }
-        return response('Unathorized', 403);
+        else{
+            return response('Unathorized',$task, 403);
+
+        }
     }
 
 }

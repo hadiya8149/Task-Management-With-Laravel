@@ -18,11 +18,9 @@ class LogRequestDetails
      */
     public function handle(Request $request, Closure $next)
     {
-
-     
         return $next($request);
     }
-    public function terminate(Request $request, Response $response): void
+    public function terminate(Request $request, $response): void
     {
         // store sql log errors in logs database table
         
