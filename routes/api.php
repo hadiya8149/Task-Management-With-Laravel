@@ -38,7 +38,7 @@ Route::middleware(['jwt.verify'])->group(function(){
     Route::get('/task', [TaskController::class, 'showTaskById']);
 
     // only managers can create edit or delete task
-    Route::post('/create-task', [TaskController::class, 'createTask'])->middleware('permission:create task, api');
+    Route::post('/create-task', [TaskController::class, 'createTask']);
     Route::delete('/delete', [TaskController::class, 'delete']);
     Route::post('/edit-task', [TaskController::class, 'editTask']);
     // a contributor can edit his assigned tasks

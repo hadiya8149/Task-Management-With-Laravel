@@ -9,6 +9,9 @@ use App\Models\AssignedTasks;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\RequireTaskId;
 use App\Http\Requests\EditTaskRequest;
+
+use App\Services\TaskService;
+
 class TaskController extends Controller
 {
     public function __construct()
@@ -19,13 +22,13 @@ class TaskController extends Controller
         // $this->middleware(['permission:update assigned task'])->only(['updateTask']);
     }
     
-    public function createTask(StoreTaskRequest $request)
+    public function createTask(StoreTaskRequest $request, TaskService $taskService)
     {
 
         // only a manager can create a task and assign to other users
 
         $validatedData = $request->validated();
-        Task::create($validatedData);
+        $taskService->createTasks($validatedData);
         return sendSuccessResponse('Task created successfully');
 
     }
@@ -43,19 +46,10 @@ class TaskController extends Controller
         $task = Task::find($taskId)->toArray();
         return sendJsonResponse(200, "Task details", $task);
     }
-    public function editTask(EditTaskRequest $request)
+    public function editTask(EditTaskRequest $request, TaskSerive $taskService)
     {
         $validatedData = $request->validated();
-        $taskId = $validatedData['id'];
-        $task = Task::find($taskId);
-        $task->title = $validatedData['title'];
-        $task->description = $validatedData['description'];
-        $task->status = $validatedData['status'];
-        $task->tag = $validatedData['tag'];
-        $task->deadline = $validatedData['deadline'];
-        $task->documents = $validatedData['documents'];
-
-        $task->save();
+        $taskService->editTask($validatedData);
         return sendSuccessResponse("Task updated successfully");
     }
     public function delete(RequireTaskId $request)
@@ -71,7 +65,6 @@ class TaskController extends Controller
     {
         $validatedData = $request->validated();
         $taskId = $validatedData['id'];
-
 
         if($taskId){
             $task = Task::find($taskId);
