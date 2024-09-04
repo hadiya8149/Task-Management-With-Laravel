@@ -16,13 +16,16 @@ class AssignedTaskController extends Controller
         $this->middleware('jwt.verify');
 
         $this->middleware('role:manager')->except(['index']);
+        $this->middleware('permission:assign task')->only(['assignTask']);
+        $this->middleware('permission:remove assignee')->only(['deleteAssignedTask']);
+        $this->middleware('permission:update assignee')->only(['editAssignedTask']);
+
     }
     public function index()
     {
-        $allAssignedTasks = AssignedTask::all();
-        return response()->json([
-            'assigned tasks'=>$allAssignedTasks
-        ]);
+        $allAssignedTasks = AssignedTask::all()->toArray();
+        $message = 'assigned tasks lists';
+        return sendJsonResponse(200, $message, $allAssignedTasks);
     }
     public function assignTask(AssignTaskRequest $request)
     {
@@ -35,11 +38,7 @@ class AssignedTaskController extends Controller
             'user_id'=>$userId
         ]);
 
-        $user = User::find($userId);
-        $user->givePermissionTo('update assigned task');
-        return response()->json([
-            'message'=>'Task assigned successfully'
-        ]);
+        return sendSuccessResponse("Task assigned successfully");
     }
     public function editAssignedTask(AssignTaskRequest $request)
     {
@@ -49,9 +48,7 @@ class AssignedTaskController extends Controller
         $assignedTask = AssignedTask::where('task_id',$taskId)->firstOrFail();
         $assignedTask->user_id = $userId;
         $assignedTask->save();
-        return response()->json([
-            'message'=>'Assignee updated successfully'
-        ]);
+        return sendSuccessResponse("Task updated successfully");
     }
     public function deleteAssignedTask(AssignTaskRequest $request)
     {
@@ -61,16 +58,13 @@ class AssignedTaskController extends Controller
 
         $assignedTask = AssignedTask::where('task_id', $taskId)->where('user_id', $userId);
         $assignedTask->delete();
-        return response()->json([
-            'message'=>'assignee removed successfully'
-        ]);
+        return sendSuccessResponse("Assignee removed successfully");
     }
     public function showAssignedTaskByUser(Request $request)
     {
         $user_id = $request->user_id;
-        $tasks = AssignedTask::find(5)->tasks->get();
-        return response()->json([
-            'data'=>$tasks
-        ]);
+        $tasks = AssignedTask::find(5)->tasks->toArray();
+        $message = "Tasks assigned to user id".$userId;
+        return sendJsonResponse(200, $message, $tasks);
     }
 }

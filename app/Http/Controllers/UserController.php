@@ -29,9 +29,7 @@ class UserController extends Controller
                 "name"=>$name
             ]
             );
-        return response()->json([
-            'message'=>'Signed up successfully'
-        ], 201);
+        return sendSuccessResponse("User signed up successfully");
     }
     public function login(LoginRequest $request)
     {
@@ -43,28 +41,17 @@ class UserController extends Controller
 
         if (!$token) 
         {
-            return response()->json([
-                            "status" => 0,
-                            "message" => "Invalid credentials"
-                        ]);
+            return sendJsonResponse(401, "Invalid credentials", []);
         }
             
-        return response()->json([
-            "status" => 1,
-            "message" => "Logged in successfully",
-            "access_token" => $token
-        ]);
-    }
-    public function getPermissions(Request $request)
-    {
-        $userId = $request->user_id;
-        $user  = User::role('contributor')->get();
-        $permissionNames = $user->getAllPermissions();
-        return response()->json(
-            [
-                'data'=>$permissionNames
-            ]
-        );
+        return sendJsonResponse(200, "Logged in successfully", [$token]);
     }
 
+    public function getPermissions()
+    {
+        $user = User::find(4);
+        $role = $user->getRoleNames();
+        $perm = $user->permissions;
+        return response($perm);
+    }
 }

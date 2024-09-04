@@ -26,28 +26,22 @@ class TaskController extends Controller
 
         $validatedData = $request->validated();
         Task::create($validatedData);
-        return response()->json([
-            'message'=>'Task created successfully',
-        ], 201);
+        return sendSuccessResponse('Task created successfully');
 
     }
     public function index(Request $request)
     {
         $columns = ['title', 'description','status', 'tag', 'documents','updated_at'];
-        $tasks = Task::all($columns);
-        return response()->json([
-            'tasks'=>$tasks
-        ]);
+        $tasks = Task::all($columns)->toArray();
+        return sendJsonResponse(200, "List of all tasks", $tasks);
 
     }
     public function showTaskById(RequireTaskId $request)
     {
         $validatedData = $request->validated();
         $taskId = $validatedData['id'];
-        $task = Task::find($taskId);
-        return response()->json([
-            'task'=>$task
-        ]);
+        $task = Task::find($taskId)->toArray();
+        return sendJsonResponse(200, "Task details", $task);
     }
     public function editTask(EditTaskRequest $request)
     {
@@ -62,9 +56,7 @@ class TaskController extends Controller
         $task->documents = $validatedData['documents'];
 
         $task->save();
-        return response()->json([
-            'message'=>'Task updated successfully'
-        ]);
+        return sendSuccessResponse("Task updated successfully");
     }
     public function delete(RequireTaskId $request)
     {
@@ -72,11 +64,7 @@ class TaskController extends Controller
         $taskId = $validatedData['id'];
         $task =  Task::find($taskId);
         $task->delete();
-        return response()->json(
-            [
-                'message'=>"Task deleted successfully"
-            ]
-            );
+        return sendSuccessResponse("Task deleted successfully");
     }
 
     public function updateTask(EditTaskRequest $request)
@@ -93,10 +81,11 @@ class TaskController extends Controller
             $task->tag = $validatedData['tag'];
             $task->deadline = $validatedData['deadline'];
             $task->documents = $validatedData['documents'];
-            // $task->save();
+            $task->save();
+            sendSuccessResponse("Task updated successfully");
         }
         else{
-            return response('Unathorized',$task, 403);
+            return sendForbiddenResponse();
 
         }
     }

@@ -24,6 +24,6 @@ class checkTaskPermission
             return $user->hasPermissionTo('update assigned task') ??  $next($request);
 
         }
-        return response()->json(['error' => 'Unauthorized'], 403);
+        return sendForbiddenResponse();
     }
 }
