@@ -44,7 +44,7 @@ class TaskController extends Controller
         $taskService->showTaskById($request->validated());
         return sendJsonResponse(200, "Task details", $task);
     }
-    public function editTask(EditTaskRequest $request, TaskSerive $taskService)
+    public function editTask(EditTaskRequest $request, TaskService $taskService)
     {
         $taskService->editTask($request->validated());
         return sendSuccessResponse("Task updated successfully");
