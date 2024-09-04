@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ApiResourceRequest extends Model
 {
     use HasFactory;
+    
     protected $table = 'api_resources_request';
     protected $fillable = [
         'method',

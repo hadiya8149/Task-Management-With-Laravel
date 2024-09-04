@@ -9,6 +9,7 @@ use App\Models\User;
 class AssignedTask extends Model
 {
     use HasFactory;
+    
     protected $fillable = ['task_id', 'user_id'];
     protected $table = 'assigned_tasks';
     public function tasks()

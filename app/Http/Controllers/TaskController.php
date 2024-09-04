@@ -19,19 +19,19 @@ class TaskController extends Controller
         $this->middleware('jwt.verify');
         $this->middleware(['role:manager,api'])->only(['createTask', 'editTask', 'delete']);
         $this->middleware(['role:contributor,api', 'update_task.permission'])->only(['updateTask']);
-        // $this->middleware(['permission:update assigned task'])->only(['updateTask']);
     }
-    
+    /**
+     * @param StoreTaskRequest $request
+     * @param TaskService $taskService
+     * @return Illuminate\Http\JsonResponse
+     */
     public function createTask(StoreTaskRequest $request, TaskService $taskService)
     {
-
-        // only a manager can create a task and assign to other users
-
-        $validatedData = $request->validated();
-        $taskService->createTasks($validatedData);
+        $taskService->createTasks($request->validated());
         return sendSuccessResponse('Task created successfully');
 
     }
+
     public function index(Request $request)
     {
         $columns = ['title', 'description','status', 'tag', 'documents','updated_at'];
@@ -39,42 +39,27 @@ class TaskController extends Controller
         return sendJsonResponse(200, "List of all tasks", $tasks);
 
     }
-    public function showTaskById(RequireTaskId $request)
+    public function showTaskById(RequireTaskId $request, TaskService $taskService)
     {
-        $validatedData = $request->validated();
-        $taskId = $validatedData['id'];
-        $task = Task::find($taskId)->toArray();
+        $taskService->showTaskById($request->validated());
         return sendJsonResponse(200, "Task details", $task);
     }
     public function editTask(EditTaskRequest $request, TaskSerive $taskService)
     {
-        $validatedData = $request->validated();
-        $taskService->editTask($validatedData);
+        $taskService->editTask($request->validated());
         return sendSuccessResponse("Task updated successfully");
     }
-    public function delete(RequireTaskId $request)
+    public function delete(RequireTaskId $request, TaskService $taskService)
     {
-        $validatedData = $request->validated();
-        $taskId = $validatedData['id'];
-        $task =  Task::find($taskId);
-        $task->delete();
+        $taskService->deleteTask($request->validated());
         return sendSuccessResponse("Task deleted successfully");
     }
 
-    public function updateTask(EditTaskRequest $request)
+    public function updateTask(EditTaskRequest $request, TaskService $taskService)
     {
-        $validatedData = $request->validated();
-        $taskId = $validatedData['id'];
-
-        if($taskId){
-            $task = Task::find($taskId);
-            $task->title = $validatedData['title'];
-            $task->description = $validatedData['description'];
-            $task->status = $validatedData['status'];
-            $task->tag = $validatedData['tag'];
-            $task->deadline = $validatedData['deadline'];
-            $task->documents = $validatedData['documents'];
-            $task->save();
+        $task = $taskSerive->updateTask($request->validated());
+        
+        if($task){
             sendSuccessResponse("Task updated successfully");
         }
         else{

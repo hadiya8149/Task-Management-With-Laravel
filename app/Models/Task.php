@@ -10,7 +10,11 @@ use Spatie\Permission\Traits\HasRoles;
 use App\Models\AssignedTask;
 class Task extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens;
+    use HasFactory;
+    use  Notifiable;
+    use  HasRoles;
+    
     protected $fillable = ['title', 'description', 'status', 'tag', 'documents', 'deadline'];
     protected $table = 'tasks';
     protected $primaryKey = 'id';

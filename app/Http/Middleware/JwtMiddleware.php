@@ -6,8 +6,8 @@ use Closure;
 use JWTAuth;
 use Exception;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
-use \Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use \Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Illuminate\Http\Request;
 
 class JwtMiddleware extends BaseMiddleware

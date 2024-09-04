@@ -31,6 +31,7 @@ class UserController extends Controller
             );
         return sendSuccessResponse("User signed up successfully");
     }
+    
     public function login(LoginRequest $request)
     {
         $validatedData = $request->validated();

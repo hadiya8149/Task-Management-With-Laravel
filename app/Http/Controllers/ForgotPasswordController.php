@@ -31,10 +31,11 @@ class ForgotPasswordController extends Controller
         ? back()->with(['status' => __($status)])
         : back()->withErrors(['email' => __($status)]);
     }
+
     public function showResetPasswrodForm() #web function not needed
     {
-
     }
+    
     public function submitResetPasswordForm(Request $request)
     {
         $request->validate([
