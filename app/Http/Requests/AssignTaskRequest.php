@@ -46,10 +46,9 @@ class AssignTaskRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $errors = $this->validator->errors();
-        $response = sendJsonResponse(400, "fix the following errors", $errors);
-        // $response =  response()->json([
-        //     'validator object'=>$errors
-        // ]);
+        $response =  response()->json([
+            'input validation errors'=>$errors
+        ]);
         throw new HttpResponseException($response);
     }
 }

@@ -60,7 +60,7 @@ class SignupRequest extends FormRequest
         $errors = $this->validator->errors();
 
         $response =  response()->json([
-            'validator object'=>$errors
+            'validation errors'=>$errors
         ]);
         throw new HttpResponseException($response);
     }
